@@ -1,16 +1,18 @@
 "use client";
 import { useState } from "react";
 import useFirstTransaction from "./hooks/useFirstTx";
+import useEnsName from "./hooks/useEns";
 export default function Home() {
   const [address, setAddress] = useState("");
   //const ethereumAddress = "0xF95f8038Eb7874Cde88A0A9a8270fcC94f5C226e";
   const etherscanApiKey = "FHK9YPDFQGS3ZQCKGQVWDSUEXWXN48QESY";
-  const { firstTransaction } = useFirstTransaction(address, etherscanApiKey);
-
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    // You may add additional logic here if needed
   };
-  console.log(firstTransaction);
+  const { firstTransaction } = useFirstTransaction(address, etherscanApiKey);
+  const { ensName, loading, error } = useEnsName(address);
+  console.log(address);
   return (
     <main className="flex flex-col items-center justify-around  p-5">
       <h1 className="font-bold"> Get First Transaction</h1>
@@ -28,7 +30,6 @@ export default function Home() {
               placeholder="Ethereum Address/ENS"
               required
             />
-
             <button
               type="submit"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm   px-5 py-2.5  text-center "
@@ -37,6 +38,15 @@ export default function Home() {
             </button>
           </div>
         </form>
+      </div>
+      <div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error}</p>
+        ) : (
+          <p>ENS Name: {ensName || "Not Found"}</p>
+        )}
       </div>
     </main>
   );
