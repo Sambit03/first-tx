@@ -1,18 +1,70 @@
 "use client";
-import { useState } from "react";
-import useFirstTransaction from "./hooks/useFirstTx";
-import useEnsName from "./hooks/useEns";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import getEns from "./utils/getEns";
+import getFirstTransaction from "./utils/getFirstTx";
+import { Transaction, createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 export default function Home() {
   const [address, setAddress] = useState("");
+  const [newEnsName, setEnsName] = useState("");
+  const [ensText, setEnsText] = useState("");
+  const [firstTransaction, setFirstTransaction] = useState<Transaction | null>(
+    null
+  );
   //const ethereumAddress = "0xF95f8038Eb7874Cde88A0A9a8270fcC94f5C226e";
   const etherscanApiKey = "FHK9YPDFQGS3ZQCKGQVWDSUEXWXN48QESY";
+
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // You may add additional logic here if needed
+    handleOnChange();
   };
-  const { firstTransaction } = useFirstTransaction(address, etherscanApiKey);
-  const { ensName, loading, error } = useEnsName(address);
-  console.log(address);
+
+  const handleOnChange = async () => {
+    try {
+      const { value, ensAvatar, error } = await getEns(address);
+      if (error) {
+        console.error("Error fetching Ens name:", error);
+        setEnsName("");
+      } else {
+        setEnsName(value || "");
+        setEnsText(ensAvatar as string);
+      }
+    } catch (error) {
+      console.error("Error fetching Ens name:", error);
+      setEnsName("");
+    }
+  };
+  const fetchTransaction = async () => {
+    try {
+      if (!address) {
+        console.error("Error: Address is null");
+        return null;
+      }
+      if (address.startsWith("0x")) {
+        return await getFirstTransaction(address, etherscanApiKey);
+      } else {
+        const { value, error } = await getEns(address);
+        if (error) {
+          console.error("Error fetching ENS name:", error);
+          return null;
+        } else {
+          return await getFirstTransaction(value as string, etherscanApiKey);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching first transaction:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (address) {
+      fetchTransaction().then(setFirstTransaction);
+    }
+  }, [address]);
+
   return (
     <main className="flex flex-col items-center justify-around  p-5">
       <h1 className="font-bold"> Get First Transaction</h1>
@@ -39,15 +91,37 @@ export default function Home() {
           </div>
         </form>
       </div>
-      <div>
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error: {error}</p>
-        ) : (
-          <p>ENS Name: {ensName || "Not Found"}</p>
-        )}
+      <div className="flex flex-row">
+        {/* <Image
+          src={ensText}
+          width={50}
+          height={50}
+          alt="Picture of the author"
+        /> */}
+        <div>{newEnsName}</div>
       </div>
+      {firstTransaction && (
+        <table>
+          <tbody>
+            <tr>
+              <td>Hash:</td>
+              <td>{firstTransaction.hash}</td>
+            </tr>
+            <tr>
+              <td>From:</td>
+              <td>{firstTransaction.from}</td>
+            </tr>
+            <tr>
+              <td>To:</td>
+              <td>{firstTransaction.to}</td>
+            </tr>
+            <tr>
+              <td>Input:</td>
+              <td>{firstTransaction.input}</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
     </main>
   );
 }

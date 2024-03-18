@@ -9,7 +9,7 @@ interface Transaction {
   value: number;
 }
 
-const useFirstTransaction = (address: string, apiKey: string) => {
+const useFirstTransaction = (address: string | null, apiKey: string) => {
   const [firstTransaction, setFirstTransaction] = useState<Transaction | null>(
     null
   );

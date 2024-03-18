@@ -60,7 +60,7 @@ const useEnsName = (address: string): EnsNameResponse => {
     };
 
     fetchEnsName();
-  }, [address]);
+  }, []);
   return { ensName, loading, error };
 };
 
