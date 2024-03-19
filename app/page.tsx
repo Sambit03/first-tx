@@ -54,12 +54,16 @@ export default function Home() {
       return null;
     }
   };
-
   useEffect(() => {
     if (address) {
       fetchTransaction().then(setFirstTransaction);
     }
+
+    if (address.endsWith(".eth")) {
+      setEnsText(address);
+    }
   }, [address]);
+
   console.log(firstTransaction);
   return (
     <main className="flex flex-col items-center justify-around  p-5">
@@ -91,27 +95,10 @@ export default function Home() {
         <div>{newEnsName}</div>
       </div>
       {firstTransaction !== null && (
-        <TransactionCard address={newEnsName}></TransactionCard>
-        // <table>
-        //   <tbody>
-        //     <tr>
-        //       <td>Hash:</td>
-        //       <td>{firstTransaction.hash}</td>
-        //     </tr>
-        //     <tr>
-        //       <td>From:</td>
-        //       <td>{firstTransaction.from}</td>
-        //     </tr>
-        //     <tr>
-        //       <td>To:</td>
-        //       <td>{firstTransaction.to}</td>
-        //     </tr>
-        //     <tr>
-        //       <td>Input:</td>
-        //       <td>{firstTransaction.input}</td>
-        //     </tr>
-        //   </tbody>
-        // </table>
+        <TransactionCard
+          address={ensText}
+          transaction={firstTransaction}
+        ></TransactionCard>
       )}
     </main>
   );

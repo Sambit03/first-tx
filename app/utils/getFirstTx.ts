@@ -4,6 +4,7 @@ interface Transaction {
   from: string;
   to: string;
   value: bigint;
+  timeStamp: number;
 }
 
 const getFirstTransaction = async (address: string, apiKey: string) => {
