@@ -5,7 +5,6 @@ import { normalize } from "viem/ens";
 interface EnsResponse {
   value: string | null;
   error: string | null;
-  ensAvatar: string | null;
 }
 
 const getEns = async (input: string): Promise<EnsResponse> => {
@@ -19,13 +18,11 @@ const getEns = async (input: string): Promise<EnsResponse> => {
       return {
         value: null,
         error: "Empty address or ENS name provided.",
-        ensAvatar: null,
       };
     }
 
     let result: string | null = null;
     let error: string | null = null;
-    let ensText: string | null = null;
 
     if (input.startsWith("0x")) {
       result = await publicClient.getEnsName({ address: input as Address });
@@ -35,19 +32,16 @@ const getEns = async (input: string): Promise<EnsResponse> => {
         return {
           value: null,
           error: "Invalid ENS name provided.",
-          ensAvatar: null,
         };
       }
       result = await publicClient.getEnsAddress({ name: normalizedAddress });
-      ensText = await publicClient.getEnsAvatar({ name: normalizedAddress });
     }
 
-    return { value: result, error: null, ensAvatar: ensText };
+    return { value: result, error: null };
   } catch (error: any) {
     return {
       value: null,
       error: "Error fetching Ens name: " + error.message,
-      ensAvatar: null,
     };
   }
 };

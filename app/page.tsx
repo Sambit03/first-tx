@@ -1,11 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import getEns from "./utils/getEns";
 import getFirstTransaction from "./utils/getFirstTx";
 import { Transaction, createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
-import { normalize } from "viem/ens";
+import { TransactionCard } from "./components/txCard";
 export default function Home() {
   const [address, setAddress] = useState("");
   const [newEnsName, setEnsName] = useState("");
@@ -14,8 +12,7 @@ export default function Home() {
     null
   );
   //const ethereumAddress = "0xF95f8038Eb7874Cde88A0A9a8270fcC94f5C226e";
-  const etherscanApiKey = "FHK9YPDFQGS3ZQCKGQVWDSUEXWXN48QESY";
-
+  const etherscanApiKey = process.env.REACT_APP_API_KEY as string;
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     handleOnChange();
@@ -23,13 +20,12 @@ export default function Home() {
 
   const handleOnChange = async () => {
     try {
-      const { value, ensAvatar, error } = await getEns(address);
+      const { value, error } = await getEns(address);
       if (error) {
         console.error("Error fetching Ens name:", error);
         setEnsName("");
       } else {
         setEnsName(value || "");
-        setEnsText(ensAvatar as string);
       }
     } catch (error) {
       console.error("Error fetching Ens name:", error);
@@ -64,7 +60,7 @@ export default function Home() {
       fetchTransaction().then(setFirstTransaction);
     }
   }, [address]);
-
+  console.log(firstTransaction);
   return (
     <main className="flex flex-col items-center justify-around  p-5">
       <h1 className="font-bold"> Get First Transaction</h1>
@@ -92,35 +88,30 @@ export default function Home() {
         </form>
       </div>
       <div className="flex flex-row">
-        {/* <Image
-          src={ensText}
-          width={50}
-          height={50}
-          alt="Picture of the author"
-        /> */}
         <div>{newEnsName}</div>
       </div>
-      {firstTransaction && (
-        <table>
-          <tbody>
-            <tr>
-              <td>Hash:</td>
-              <td>{firstTransaction.hash}</td>
-            </tr>
-            <tr>
-              <td>From:</td>
-              <td>{firstTransaction.from}</td>
-            </tr>
-            <tr>
-              <td>To:</td>
-              <td>{firstTransaction.to}</td>
-            </tr>
-            <tr>
-              <td>Input:</td>
-              <td>{firstTransaction.input}</td>
-            </tr>
-          </tbody>
-        </table>
+      {firstTransaction !== null && (
+        <TransactionCard address={newEnsName}></TransactionCard>
+        // <table>
+        //   <tbody>
+        //     <tr>
+        //       <td>Hash:</td>
+        //       <td>{firstTransaction.hash}</td>
+        //     </tr>
+        //     <tr>
+        //       <td>From:</td>
+        //       <td>{firstTransaction.from}</td>
+        //     </tr>
+        //     <tr>
+        //       <td>To:</td>
+        //       <td>{firstTransaction.to}</td>
+        //     </tr>
+        //     <tr>
+        //       <td>Input:</td>
+        //       <td>{firstTransaction.input}</td>
+        //     </tr>
+        //   </tbody>
+        // </table>
       )}
     </main>
   );
