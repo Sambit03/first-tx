@@ -1,3 +1,5 @@
+import getEns from "./getEns";
+
 interface Transaction {
   input: String;
   hash: string;
@@ -7,10 +9,12 @@ interface Transaction {
   timeStamp: number;
 }
 
-const getFirstTransaction = async (address: string, apiKey: string) => {
+const getFirstTransaction = async (address: string | undefined) => {
+  const apiKey = "YQEZWRJBJBABFKIB7RMW1YW9DYVMFQ1TRT";
+  const { value: resolvedAddress, error } = await getEns(address as string);
   try {
     const response = await fetch(
-      `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`
+      `https://api.etherscan.io/api?module=account&action=txlist&address=${resolvedAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`
     );
 
     if (!response.ok) {

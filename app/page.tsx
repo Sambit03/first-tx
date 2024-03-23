@@ -4,6 +4,7 @@ import getEns from "./utils/getEns";
 import getFirstTransaction from "./utils/getFirstTx";
 import { Transaction, createPublicClient, http } from "viem";
 import { TransactionCard } from "./components/txCard";
+
 export default function Home() {
   const [address, setAddress] = useState("");
   const [newEnsName, setEnsName] = useState("");
