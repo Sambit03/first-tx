@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import getEnsAvatar from "../utils/getEnsAvatar";
 import { formatEther } from "viem";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
 interface TransactionCardProps {
   address: string;
@@ -30,9 +31,10 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
       const unixTimestamp = transaction.timeStamp;
       if (unixTimestamp !== undefined) {
         const dateObject = new Date(unixTimestamp * 1000);
-        //const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true });
+        const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true });
+        console.log(timeAgo);
         const humanDate = dateObject.toLocaleString();
-        setTxTime(humanDate);
+        setTxTime(timeAgo);
       } else {
         console.log("Timestamp is undefined.");
         setTxTime(null);
@@ -58,16 +60,19 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
     <div className="max-w-500px mx-auto rounded shadow-lg bg-white border-2 border-gray-300">
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{address}</div>
-        {avatarUrl ? (
-          <Image src={avatarUrl} width={50} height={50} alt="Avatar" />
-        ) : (
-          <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
-        )}
-
+        <div className="flex flex-end">
+          {avatarUrl ? (
+            <Image src={avatarUrl} width={50} height={50} alt="Avatar" />
+          ) : (
+            <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
+          )}
+          <div className="font-bold text-xl mb-2">
+            Your First Transcation was {txTime}
+          </div>
+        </div>
         <p className="text-gray-700 text-base">
           From: {transaction.from} <br />
           To: {transaction.to} <br />
-          Time: {txTime} <br />
           Amount: {amount} ETH
         </p>
       </div>

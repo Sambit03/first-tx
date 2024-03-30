@@ -14,7 +14,6 @@ const getEnsAvatar = async (input: string): Promise<EnsResponse> => {
       transport: http(),
     });
 
-    let error: string | null = null;
     let ensText: string | null = null;
     const normalizedInput = input.trim();
     console.log("Normalized Input:", normalizedInput);
