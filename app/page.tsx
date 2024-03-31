@@ -92,9 +92,6 @@ export default function Home() {
           </div>
         </form>
       </div>
-      <div className="flex flex-row">
-        <div>{newEnsName}</div>
-      </div>
       {firstTransaction !== null && (
         <TransactionCard
           address={ensText}
