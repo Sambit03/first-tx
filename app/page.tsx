@@ -43,6 +43,7 @@ export default function Home() {
         return await getFirstTransaction(address, etherscanApiKey);
       } else {
         const { value, error } = await getEns(address);
+
         if (error) {
           console.error("Error fetching ENS name:", error);
           return null;

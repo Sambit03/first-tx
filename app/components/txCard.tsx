@@ -27,14 +27,13 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
   const [txFrom, setTxFrom] = useState("");
   const [txTo, setTxTo] = useState("");
   useEffect(() => {
-    if (transaction !== null) {
+    if (transaction !== null && transaction !== "E") {
       const amountFormatted = formatEther(transaction?.value);
       setAmount(amountFormatted);
       const unixTimestamp = transaction.timeStamp;
       if (unixTimestamp !== undefined) {
         const dateObject = new Date(unixTimestamp * 1000);
         const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true });
-        console.log(timeAgo);
         const humanDate = dateObject.toLocaleString();
         setTxTime(timeAgo);
       } else {
@@ -82,18 +81,24 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
       fetchEns(transaction.to as string, setTxTo);
     }
   }, [transaction]);
-
+  console.log("tx--", typeof transaction);
   return (
     <div className="max-w-500px mx-auto rounded shadow-lg bg-white border-2 border-gray-300">
       <div className="px-6 py-4">
         <div className="font-bold text-xl text-green-500 mb-2">{address}</div>
-        <div className="flex flex-end">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           {avatarUrl ? (
-            <Image src={avatarUrl} width={50} height={50} alt="Avatar" />
+            <Image
+              src={avatarUrl}
+              width={50}
+              height={50}
+              alt="Avatar"
+              className="md:w-16 md:h-16 mb-4 md:mb-0 mr-0 md:mr-4 rounded-full"
+            />
           ) : (
-            <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
+            <div className="w-16 h-16 bg-gray-300 rounded-full mb-4 md:mb-0 mr-0 md:mr-4"></div>
           )}
-          <div className="font-bold text-xl p-5">
+          <div className="font-bold text-xl md:text-2xl p-5">
             Your First Transaction was {txTime}
           </div>
         </div>
